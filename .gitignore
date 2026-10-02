@@ -1,0 +1,20 @@
+# Java / Maven
+backend/target/
+**/target/
+
+# Node.js
+frontend/node_modules/
+**/node_modules/
+
+# Vite
+frontend/dist/
+**/dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
