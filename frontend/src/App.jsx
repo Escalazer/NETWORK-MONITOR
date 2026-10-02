@@ -9,7 +9,7 @@ import {
   HttpCard,
   LocalNetworkCard,
 } from "./components/ResultSections.jsx";
-import { runDiagnostic, getHistory } from "./api.js";
+import { runDiagnostic } from "./api.js";
 import "./App.css";
 
 export default function App() {
@@ -22,10 +22,28 @@ export default function App() {
   const [monitorTarget, setMonitorTarget] = useState("google.com");
 
   useEffect(() => {
-  getHistory()
-    .then((data) => setHistory(data.slice(-50)))
-    .catch((err) => console.error("Failed to load history:", err));
+    const savedHistory = localStorage.getItem("networkMonitorHistory");
+
+    if (savedHistory) {
+      try {
+        setHistory(JSON.parse(savedHistory));
+      } catch (err) {
+        console.error("Failed to load local history:", err);
+        localStorage.removeItem("networkMonitorHistory");
+      }
+    }
   }, []);
+
+  function saveHistory(data) {
+    setHistory((currentHistory) => {
+      const updatedHistory = [...currentHistory, data].slice(-50);
+      localStorage.setItem(
+        "networkMonitorHistory",
+        JSON.stringify(updatedHistory)
+      );
+      return updatedHistory;
+    });
+  }
 
   async function handleRun(target) {
     setLoading(true);
@@ -35,8 +53,15 @@ export default function App() {
       const data = await runDiagnostic(target);
       setResult(data);
 
-      const updatedHistory = await getHistory();
-      setHistory(updatedHistory.slice(-50));
+      saveHistory({
+        id: Date.now(),
+        target: data.target,
+        durationMs: data.totalDurationMs,
+        dnsOnline: data.dns?.resolved ?? false,
+        reachable: data.ping?.reachable ?? false,
+        packetLoss: data.ping?.packetLossPercent ?? 0,
+        timestamp: new Date().toISOString(),
+      });
     } catch (err) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -57,8 +82,15 @@ export default function App() {
         const data = await runDiagnostic(monitorTarget.trim());
         setResult(data);
 
-        const updatedHistory = await getHistory();
-        setHistory(updatedHistory.slice(-50));
+        saveHistory({
+          id: Date.now(),
+          target: data.target,
+          durationMs: data.totalDurationMs,
+          dnsOnline: data.dns?.resolved ?? false,
+          reachable: data.ping?.reachable ?? false,
+          packetLoss: data.ping?.packetLossPercent ?? 0,
+          timestamp: new Date().toISOString(),
+        });
       } catch (err) {
         setError(err.message || "Monitoring check failed.");
       }
