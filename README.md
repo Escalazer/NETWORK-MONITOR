@@ -1,3 +1,7 @@
+## Live Demo
+
+[NetworkMonitor Live Demo](https://network-monitor-frontend-hczy.onrender.com)
+
 # NetworkMonitor
 
 A full-stack network diagnostic and monitoring application built with React and Spring Boot.
