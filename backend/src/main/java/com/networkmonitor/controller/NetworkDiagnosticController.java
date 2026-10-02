@@ -11,7 +11,7 @@ import com.networkmonitor.service.NetworkDiagnosticService;
 
 @RestController
 @RequestMapping("/api/network")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class NetworkDiagnosticController {
 
     private final NetworkDiagnosticService diagnosticService;

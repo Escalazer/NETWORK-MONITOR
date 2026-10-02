@@ -12,7 +12,7 @@ import com.networkmonitor.service.DiagnosticHistoryService;
 
 @RestController
 @RequestMapping("/api/history")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class DiagnosticHistoryController {
 
     private final DiagnosticHistoryService historyService;
